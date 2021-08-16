@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd">
+	<flow name="writeFlow" doc:id="4ad0f9f8-f444-41b0-b505-b40b17e3b013" >
+		<http:listener doc:name="Listener" doc:id="69528a13-42c1-47e1-b86f-eb100f99c378" config-ref="HTTP_Listener_config" path="/input" allowedMethods="POST" />
+		<ee:transform doc:name="Transform Message" doc:id="5e04d50f-cc5c-4ee4-ac09-444f8cd5264a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv quoteValues=false,header=false
+---
+payload
+//payload map (payload01, indexOfPayload01) -> {
+//	username: payload01.username as String,
+//	email: payload01.email as String,
+//	age: payload01.age as Number
+//}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ftp:write doc:name="Write" doc:id="e8a686a4-89df-4614-a135-53dd1762b01e" config-ref="FTP_Config" path="input.csv" mode="APPEND"/>
+	</flow>
+	<flow name="readFlow" doc:id="a6783eac-964d-49e5-8486-6ea1d8ee1858" >
+		<http:listener doc:name="Listener" doc:id="106fe7de-2451-453a-bf9e-262e1fb82e82" config-ref="HTTP_Listener_config" path="/read_csv" />
+		<ftp:read doc:name="Read" doc:id="b79a93a7-5cc6-46a9-aaff-a482f8baf449" config-ref="FTP_Config" path="input.csv"/>
+		<ee:transform doc:name="Transform Message" doc:id="a855cbfb-45cc-4fc4-8321-7c6d39c63b12" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map (value,index)->
+ {
+	username: value.username,
+	email: value.email,
+	age: value.age as Number
+ }
+  ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="a283c368-24f1-436d-958e-9e80b864a39f" message="#[payload]" />
+	</flow>
+</mule>

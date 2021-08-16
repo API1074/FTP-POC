@@ -1,0 +1,12 @@
+http: 
+  port: "8081"
+  
+file:
+  accdir: "C:/new_workspace/csv-file-handling-poc/src/main/resources/Files" 
+  
+ftp:
+  workDir: "empdir"
+  host: "localhost"
+  port: "21"
+  username: "ftpuser"
+  password: "ftpuser"

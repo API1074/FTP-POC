@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="13c9588c-980a-4f3f-a383-30aa7594fcf7" >
+		<http:listener-connection host="0.0.0.0" port="${http.port}" />
+	</http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="b726c405-e8bd-483c-ae71-c0d11805061e" file="properties\config.yaml" />
+	<ftp:config name="FTP_Config" doc:name="FTP Config" doc:id="c597e88d-3366-4946-a1d0-ffcb819b39df" >
+		<ftp:connection host="${ftp.host}" workingDir="${ftp.workDir}" port="${ftp.port}" username="${ftp.username}" password="${ftp.password}"/>
+	</ftp:config>
+</mule>
